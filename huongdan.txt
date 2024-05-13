@@ -1,0 +1,1 @@
+MONGO_DB=mongodb+srv://thaidp2002:chatappdb@chatappdatabase.mebfcgt.mongodb.net/?retryWrites=true&w=majority
