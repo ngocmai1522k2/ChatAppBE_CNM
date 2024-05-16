@@ -6,7 +6,8 @@ const createUser = async (req, res) => {
     try {
         const { name, username, phone, gender, dateOfBirth, password, confirmPassword } = req.body;
         const regEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
-        const regPhone = /^\+84\d{9}$/;
+        // const regPhone = /^\d{9}$/;
+        console.log('req.body', req.body);
         // Định dạng số điện thoại gồm +84 và 9 chữ số
 
         if (!name || !username || !phone || !password || !confirmPassword) {
@@ -19,11 +20,11 @@ const createUser = async (req, res) => {
                 status: 'ERR',
                 message: 'The input is not a valid email',
             });
-        } else if (!regPhone.test(phone)) {
-            return res.status(200).json({
-                status: 'ERR',
-                message: 'The phone number is not valid +84xxxxxxxxx',
-            });
+            // } else if (!regPhone.test(phone)) {
+            //     return res.status(200).json({
+            //         status: 'ERR',
+            //         message: 'The phone number is not valid +84xxxxxxxxx',
+            //     });
         } else if (password !== confirmPassword) {
             return res.status(200).json({
                 status: 'ERR',
@@ -53,7 +54,7 @@ const createUser = async (req, res) => {
             if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
                 age--;
             }
-
+            console.log('age', age);
             // Kiểm tra tuổi
             if (age < 18) {
                 return res.status(200).json({

@@ -10,7 +10,7 @@ const {
 const createUser = (newUser) => {
     return new Promise(async (resolve, reject) => {
         const { name, username, phone, gender, dateOfBirth, password, confirmPassword } = newUser;
-
+        console.log('newUser', newUser);
         try {
             const checkUser = await User.findOne({
                 phone: phone,
@@ -108,6 +108,28 @@ const updateUser = (id, data) => {
                 // Mã hóa mật khẩu mới nếu có
                 data.password = bcrypt.hashSync(data.password, 10);
             }
+            if (data.phone && data.phone !== checkUser.phone) {
+                const checkUserPhone = await User.findOne({ phone: data.phone });
+                if (checkUserPhone !== null) {
+                    resolve({
+                        status: 'ERR',
+                        massage: 'Phone is already exists',
+                    });
+                }
+            }
+            //Kiểm tra từ 18 tuổi trở lên
+            if (data.dateOfBirth) {
+                const date = new Date(data.dateOfBirth);
+                const now = new Date();
+                const age = now.getFullYear() - date.getFullYear();
+                if (age < 18) {
+                    resolve({
+                        status: 'ERR',
+                        massage: 'User must be at least 18 years old',
+                    });
+                }
+            }
+            // Cập nhật dữ liệu mới vào cơ sở dữ liệu
             const updateUser = await User.findByIdAndUpdate(id, data, { new: true });
             console.log('id update', id);
             console.log('data update', data);
