@@ -66,6 +66,39 @@ module.exports = function (server) {
                 console.log('Error sendMessage by socket io' + error);
             }
         });
+        socket.on('sendMessageToGroup', async (data) => {
+            try {
+                const { groupId, senderId, message } = data;
+
+                // Tạo một tin nhắn mới
+                const newMessage = new Message({
+                    senderId: senderId,
+                    receiverId: groupId,
+                    message: message,
+                });
+
+                // Lưu tin nhắn mới vào cơ sở dữ liệu
+                await newMessage.save();
+
+                // Thêm ID của tin nhắn mới vào mảng tin nhắn của nhóm
+                const conversation = await Conversation.findById(groupId);
+                if (!conversation) {
+                    return socket.emit('sendMessageToGroupError', { error: 'Không tìm thấy cuộc trò chuyện' });
+                }
+                conversation.messages.push(newMessage._id);
+
+                // Lưu lại thông tin cập nhật của nhóm
+                await conversation.save();
+
+                // Gửi tin nhắn mới đến tất cả các thành viên trong nhóm
+                io.emit('sendMessageToGroupSuccess', newMessage);
+                io.to(groupId).emit('newGroupMessage', newMessage);
+
+            } catch (error) {
+                console.error('Lỗi khi gửi tin nhắn đến nhóm:', error);
+                socket.emit('sendMessageToGroupError', { error: 'Lỗi khi gửi tin nhắn đến nhóm' });
+            }
+        });
     });
 };
 
