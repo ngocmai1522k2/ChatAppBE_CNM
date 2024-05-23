@@ -63,4 +63,8 @@ routes.post('/deleteInvite/:id', userController.deleteInvite);
 //[POST] http://localhost:3001/api/user/deleteInvite/:id
 routes.post('/deleteListaddFriend/:id', userController.deleteListaddFriend);
 
+// xóa bạn bè on App
+//[POST] http://localhost:3001/api/user/deleteFriendOnApp/:id
+routes.post('/deleteFriendOnApp/:id', userController.deleteFriendOnApp);
+
 module.exports = routes;

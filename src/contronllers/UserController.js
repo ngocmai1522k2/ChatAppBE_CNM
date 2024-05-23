@@ -398,6 +398,22 @@ const deleteListaddFriend = async (req, res) => {
         });
     }
 };
+// xoa bạn bằng sdt
+const deleteFriendOnApp = async (req, res) => {
+    try {
+        console.log('req.body', req.body);
+        // Kiểm tra và xử lý từng thuộc tính được cung cấp trong req.body
+        const { phone } = req.body;
+        const userId = req.params.id;
+
+        const response = await UserService.deleteFriend(userId, phone);
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(404).json({
+            message: e,
+        });
+    }
+};
 
 module.exports = {
     createUser,
@@ -417,4 +433,5 @@ module.exports = {
     getDetailByPhone,
     deleteInvite,
     deleteListaddFriend,
+    deleteFriendOnApp,
 };

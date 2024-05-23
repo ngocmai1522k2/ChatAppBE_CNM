@@ -477,6 +477,35 @@ const deleteListaddFriend = async (id, phoneToDelete) => {
         }
     });
 };
+// xóa bạn bè
+const deleteFriendOnApp = async (id, phoneToDelete) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Tìm người dùng trong cơ sở dữ liệu với id tương ứng và cập nhật phoneBooks
+            const updatedUser = await User.findOneAndUpdate(
+                { _id: id },
+                { $pull: { phoneBooks: { phone: phoneToDelete } } },
+                { new: true },
+            );
+
+            // Kiểm tra xem người dùng có tồn tại không
+            if (!updatedUser) {
+                resolve({
+                    status: 'ERR',
+                    message: 'User is not defined',
+                });
+                return;
+            }
+            resolve({
+                status: 'OK',
+                message: 'Friend deleted successfully',
+                data: updatedUser,
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
 module.exports = {
     createUser,
     loginUser,
@@ -492,4 +521,5 @@ module.exports = {
     deleteFriend,
     deleteInvite,
     deleteListaddFriend,
+    deleteFriendOnApp
 };
